@@ -1,0 +1,29 @@
+{
+    "name": "5818959/payler-client",
+    "type": "library",
+    "description": "A PHP wrapper for Payler's APIs",
+    "keywords": ["payler", "payment", "api"],
+    "homepage": "http://github.com/5818959/payler-client",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sergey S.",
+            "email": "5818959@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Payler\\": "src/"
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.4",
+        "friendsofphp/php-cs-fixer": "^2.15",
+        "phpmd/phpmd": "^2.7",
+        "sebastian/phpcpd": "^4.1"
+    }
+}

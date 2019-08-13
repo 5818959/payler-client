@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="PHP_CodeSniffer">
+    <file>./</file>
+    
+    <exclude-pattern>vendor/</exclude-pattern>
+
+    <rule ref="PSR2"/>
+
+    <rule ref="Squiz.Commenting.FunctionComment">
+        <exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
+        <exclude name="Squiz.Commenting.FunctionComment.ThrowsNoFullStop"/>
+        <exclude name="Squiz.Commenting.FunctionComment.MissingReturn"/>
+    </rule>
+    <rule ref="Squiz.Commenting.FunctionCommentThrowTag" />
+    <rule ref="Squiz.Commenting.ClassComment" />
+    <rule ref="Squiz.Commenting.VariableComment" />
+
+    <arg name="extensions" value="php,php.dist"/>
+    <arg name="encoding" value="utf-8"/>
+    <arg name="report" value="full"/>
+    <arg name="colors"/>
+    <arg value="pws"/>
+</ruleset>
