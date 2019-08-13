@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * Payler API base URL.
+ */
+define('PAYLER_BASE_URL', 'https://sandbox.payler.com');
+/**
+ * Payler seller secret key.
+ */
+define('PAYLER_KEY', '66874fde-474d-4c74-8f3a-1b79f2650945');
+/**
+ * Payler seller password for returns.
+ */
+define('PAYLER_PASSWORD', 'ygA2tJp3NY');
