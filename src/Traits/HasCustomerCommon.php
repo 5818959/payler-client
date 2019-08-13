@@ -40,18 +40,25 @@ trait HasCustomerCommon
 
     /**
      * Update the customer information.
+     *
+     * @param string $customerId Customer id
+     * @param array  $payload    Request parameters
      */
-    public function customerUpdate()
+    public function customerUpdate(string $customerId, array $payload)
     {
-        // TODO implements
+        $payload['customer_id'] = $customerId;
+
+        return $this->request('CustomerUpdate', $payload);
     }
 
     /**
      * Delete the customer.
+     *
+     * @param string $customerId Customer id
      */
-    public function customerDelete()
+    public function customerDelete(string $customerId)
     {
-        // TODO implements
+        return $this->request('CustomerDelete', ['customer_id' => $customerId]);
     }
 
     /**
