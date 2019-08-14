@@ -96,26 +96,58 @@ class MerchantClient extends PaylerClient implements MerchantApi
 
     /**
      * Repeat recurrent payment.
+     *
+     * @param string $orderId Order id
+     * @param integer $amount Amount
+     * @param string|null $recurrentTemplateId Recurrent template id
+     * @param string|null $cardId Card id
+     *
+     * @throws \Payler\Exceptions\RequestException Wrong request
      */
-    public function repeatPay()
+    public function repeatPay(string $orderId, int $amount, string $recurrentTemplateId = null, string $cardId = null)
     {
-        // code...
+        $payload = [
+            'order_id' => $orderId,
+            'amount' => $amount,
+        ];
+
+        if (isset($recurrentTemplateId)) {
+            $payload['recurrent_template_id'] = $recurrentTemplateId;
+
+            return $this->request('RepeatPay', $payload);
+        }
+
+        if (isset($cardId)) {
+            $payload['card_id'] = $cardId;
+
+            return $this->request('RepeatPay', $payload);
+        }
+
+        throw new RequestException('You must set recurrent_template_id or card_id parameter.');
     }
 
     /**
      * Get recurrent template information.
+     *
+     * @param string $recurrentTemplateId Recurrent template id
      */
-    public function getTemplate()
+    public function getTemplate(string $recurrentTemplateId)
     {
-        // TODO implement
+        return $this->request('GetTemplate', ['recurrent_template_id' => $recurrentTemplateId]);
     }
 
     /**
      * Activate/deactivate recurrent template.
+     *
+     * @param string $recurrentTemplateId Recurrent template id
+     * @param boolean $active Show if template should be activated (true) or deactivated (false)
      */
-    public function activateTemplate()
+    public function activateTemplate(string $recurrentTemplateId, bool $active)
     {
-        // TODO implement
+        return $this->request('ActivateTemplate', [
+            'recurrent_template_id' => $recurrentTemplateId,
+            'active' => $active ? 1 : 0
+        ]);
     }
 
     /**
