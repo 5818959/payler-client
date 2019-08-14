@@ -6,9 +6,14 @@ trait HasCustomerMerchant
 {
     /**
      * Save the customer card.
+     *
+     * @param string $customerId Customer id
+     * @param array  $payload    Request parameters
      */
-    public function saveCard()
+    public function saveCard(string $customerId, array $payload)
     {
-        // TODO implement
+        $payload['customer_id'] = $customerId;
+
+        return $this->request('SaveCard', $payload);
     }
 }

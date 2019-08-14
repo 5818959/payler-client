@@ -2,30 +2,49 @@
 
 namespace Payler\Traits;
 
+use Payler\Exceptions\RequestException;
+
 trait HasCustomerCommon
 {
     /**
      * Get the customer saved card status.
+     *
+     * @param string|null $cardId    Card id
+     * @param string|null $sessionId Session id
+     *
+     * @throws \Payler\Exceptions\RequestException Wrong request
      */
-    public function getStatusSaveCard()
+    public function getStatusSaveCard(string $cardId = null, string $sessionId = null)
     {
-        // TODO implements
+        if (isset($cardId)) {
+            return $this->request('GetStatusSaveCard', ['card_id' => $cardId]);
+        }
+
+        if (isset($sessionId)) {
+            return $this->request('GetStatusSaveCard', ['session_id' => $sessionId]);
+        }
+
+        throw new RequestException('You must set card_id or session_id parameter.');
     }
 
     /**
      * Get the customer saved cards list.
+     *
+     * @param string $customerId Customer id
      */
-    public function getCardList()
+    public function getCardList(string $customerId)
     {
-        // TODO implements
+        return $this->request('GetCardList', ['customer_id' => $customerId]);
     }
 
     /**
      * Remove the customer saved card.
+     *
+     * @param string $cardId Card id
      */
-    public function removeCard()
+    public function removeCard(string $cardId)
     {
-        // TODO implements
+        return $this->request('RemoveCard', ['card_id' => $cardId]);
     }
 
     /**
