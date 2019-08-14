@@ -17,10 +17,10 @@ $client = new MerchantClient(PAYLER_BASE_URL, PAYLER_KEY, PAYLER_PASSWORD);
  */
 
 $card = [
-    'card_number' => '4116580000105910',
-    'card_holder' => 'Test Holder',
-    'expired_year' => 99,
-    'expired_month' => 12,
+    'card_number' => PAYLER_TEST_CARD_1_NUMBER,
+    'card_holder' => PAYLER_TEST_CARD_1_HOLDER,
+    'expired_year' => PAYLER_TEST_CARD_1_YEAR,
+    'expired_month' => PAYLER_TEST_CARD_1_MONTH,
     'lang' => 'ru',
 ];
 

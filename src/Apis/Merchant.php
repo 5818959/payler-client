@@ -11,8 +11,13 @@ interface Merchant extends CustomerCommon, CustomerMerchant
 
     /**
      * Block funds for two step payment.
+     *
+     * @param string $orderId    Order id
+     * @param array  $payload    Request parameters
+     * @param string $customerId Customer id
+     * @param string $cardId     Card id
      */
-    public function block();
+    public function block(string $orderId, array $payload, string $customerId = null, string $cardId = null);
 
     /**
      * Charge funds in two step payment.
@@ -21,8 +26,11 @@ interface Merchant extends CustomerCommon, CustomerMerchant
 
     /**
      * Retrieve block funds in two step payment.
+     *
+     * @param string  $orderId   Order id
+     * @param integer $newAmount New amount
      */
-    public function retrieve();
+    public function retrieve(string $orderId, int $newAmount);
 
     /**
      * Return funds.
@@ -46,11 +54,23 @@ interface Merchant extends CustomerCommon, CustomerMerchant
 
     /**
      * Get payment status.
+     *
+     * @param string $orderId Order id
      */
-    public function getStatus();
+    public function getStatus(string $orderId);
 
     /**
      * Get extended payment status.
+     *
+     * @param string $orderId Order id
      */
-    public function getAdvancedStatus();
+    public function getAdvancedStatus(string $orderId);
+
+    /**
+     * Get extended payment status.
+     *
+     * @param string $paRes Payment authentication response
+     * @param string $md    Merchant data
+     */
+    public function send3DS(string $paRes, string $md);
 }

@@ -12,3 +12,24 @@ define('PAYLER_KEY', '66874fde-474d-4c74-8f3a-1b79f2650945');
  * Payler seller password for returns.
  */
 define('PAYLER_PASSWORD', 'ygA2tJp3NY');
+
+/**
+ * Payler test card 1 number
+ */
+define('PAYLER_TEST_CARD_1_NUMBER', '4000000000000000');
+/**
+ * Payler test card 1 holder
+ */
+define('PAYLER_TEST_CARD_1_HOLDER', 'NONAME');
+/**
+ * Payler test card 1 expired year
+ */
+define('PAYLER_TEST_CARD_1_YEAR', 20);
+/**
+ * Payler test card 1 expired month
+ */
+define('PAYLER_TEST_CARD_1_MONTH', 1);
+/**
+ * Payler test card 1 secure code
+ */
+define('PAYLER_TEST_CARD_1_CVV', 000);

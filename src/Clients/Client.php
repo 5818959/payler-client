@@ -39,7 +39,7 @@ abstract class Client
      *
      * @var string|null
      */
-    private $password;
+    protected $password;
 
     /**
      * Constructor.

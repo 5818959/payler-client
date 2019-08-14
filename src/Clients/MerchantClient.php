@@ -35,10 +35,30 @@ class MerchantClient extends PaylerClient implements MerchantApi
 
     /**
      * Block funds for two step payment.
+     *
+     * @param string $orderId    Order id
+     * @param array  $payload    Request parameters
+     * @param string $customerId Customer id
+     * @param string $cardId     Card id
      */
-    public function block()
+    public function block(string $orderId, array $payload, string $customerId = null, string $cardId = null)
     {
-        // code...
+        $payload['order_id'] = $orderId;
+
+        if (isset($customerId)) {
+            $payload['customer_id'] = $customerId;
+        }
+
+        if (isset($cardId)) {
+            unset(
+                $payload['card_number'],
+                $payload['expired_year'],
+                $payload['expired_month']
+            );
+            $payload['card_id'] = $cardId;
+        }
+
+        return $this->request('Block', $payload);
     }
 
     /**
@@ -51,10 +71,19 @@ class MerchantClient extends PaylerClient implements MerchantApi
 
     /**
      * Retrieve block funds in two step payment.
+     *
+     * @param string  $orderId   Order id
+     * @param integer $newAmount Request parameters
      */
-    public function retrieve()
+    public function retrieve(string $orderId, int $newAmount)
     {
-        // code
+        $payload = [
+            'password' => $this->password,
+            'order_id' => $orderId,
+            'amount' => $newAmount,
+        ];
+
+        return $this->request('Retrieve', $payload);
     }
 
     /**
@@ -91,17 +120,32 @@ class MerchantClient extends PaylerClient implements MerchantApi
 
     /**
      * Get payment status.
+     *
+     * @param string $orderId Order id
      */
-    public function getStatus()
+    public function getStatus(string $orderId)
     {
-        // code...
+        return $this->request('GetStatus', ['order_id' => $orderId]);
     }
 
     /**
      * Get extended payment status.
+     *
+     * @param string $orderId Order id
      */
-    public function getAdvancedStatus()
+    public function getAdvancedStatus(string $orderId)
     {
-        // TODO implement
+        return $this->request('GetAdvancedStatus', ['order_id' => $orderId]);
+    }
+
+    /**
+     * Get extended payment status.
+     *
+     * @param string $paRes Payment authentication response
+     * @param string $md    Merchant data
+     */
+    public function send3DS(string $paRes, string $md)
+    {
+        return $this->request('Send3DS', ['pares' => $paRes, 'md' => $md]);
     }
 }
