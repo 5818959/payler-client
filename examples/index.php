@@ -1,9 +1,21 @@
 <?php
 
-$acsurl = 'http://localhost';
-$md = 'string';
-$pareq = 'string';
-$termurl = 'http://localhost:8989/3ds_endpoint.php';
+require_once __DIR__ . '/config.php';
+
+$data = @file_get_contents(THREEDS_JSON_FILE);
+if (!empty($data)) {
+    $data = json_decode($data, true);
+} else {
+    echo 'No 3DS data.' . PHP_EOL;
+
+    exit(1);
+}
+
+if (!isset($data['acs_url'])) {
+    echo 'No 3DS data.' . PHP_EOL;
+
+    exit(1);
+}
 
 ?>
 <!DOCTYPE html>
@@ -21,10 +33,10 @@ $termurl = 'http://localhost:8989/3ds_endpoint.php';
 </head>
 <body>
 
-    <form id="redirect" method="POST" action="<?= $acsurl; ?>">
-        <input type="hidden" name="md" value="<?= $md; ?>">
-        <input type="hidden" name="pareq" value="<?= $pareq; ?>">
-        <input type="hidden" name="termurl" value="<?= $termurl; ?>">
+    <form id="redirect" method="POST" action="<?= $data['acs_url']; ?>">
+        <input type="hidden" name="md" value="<?= $data['md']; ?>">
+        <input type="hidden" name="pareq" value="<?= $data['pareq']; ?>">
+        <input type="hidden" name="termurl" value="<?= THREEDS_ENDPOINT; ?>">
     </form>
     <script type="text/javascript">
         (function () {
