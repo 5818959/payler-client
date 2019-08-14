@@ -8,7 +8,7 @@ use Payler\Exceptions\PaylerException;
 
 $client = new MerchantClient(PAYLER_BASE_URL, PAYLER_KEY, PAYLER_PASSWORD);
 
-$customerId = '7wx9WZQy6NFkZgBR9pJHg6rwNoTHfPksQqKW';
+$customerId = '';
 $orderId = time() . '-' . uniqid();
 
 if (empty($customerId)) {
