@@ -8,37 +8,28 @@ use Payler\Exceptions\PaylerException;
 
 $client = new MerchantClient(PAYLER_BASE_URL, PAYLER_KEY, PAYLER_PASSWORD);
 
-$customerId = '';
+$customerEmail = 'test_customer@localhost.test';
+$card = [
+    'card_number' => PAYLER_TEST_CARD_1_NUMBER,
+    'card_holder' => PAYLER_TEST_CARD_1_HOLDER,
+    'expired_year' => PAYLER_TEST_CARD_1_YEAR,
+    'expired_month' => PAYLER_TEST_CARD_1_MONTH,
+    'cvv' => PAYLER_TEST_CARD_1_CVV,
+];
 $orderId = time() . '-' . uniqid();
-
-if (empty($customerId)) {
-    echo 'WARNING!' . PHP_EOL . PHP_EOL
-       . 'To run this example you should set $customerId. Please edit example code.' . PHP_EOL;
-
-    exit(1);
-}
+$amount = 200;
 
 /**********************************************************************
  *
  * Block
  *
  */
-
-$card = [
-    'card_number' => PAYLER_TEST_CARD_1_NUMBER,
-    'card_holder' => PAYLER_TEST_CARD_1_HOLDER,
-    'expired_year' => PAYLER_TEST_CARD_1_YEAR,
-    'expired_month' => PAYLER_TEST_CARD_1_MONTH,
-    'secure_code' => PAYLER_TEST_CARD_1_CVV,
-];
 $payment = [
     'currency' => 'RUB',
-    'amount' => 100,
-    'email' => 'test_customer@localhost.test',
     'lang' => 'ru',
     'user_data' => 'test block request',
     'recurrent' => 1,
-    'save_card' => 1,
+    'save_card' => 0,
     'user_entered_param1' => 'value1',
     'user_entered_param2' => 'value2',
 ];
@@ -46,14 +37,14 @@ $payment = [
 $payload = array_merge($payment, $card);
 
 try {
-    $response = $client->block($orderId, $payload, $customerId);
+    $response = $client->block($orderId, $amount, $card['cvv'], $customerEmail, $payload);
 } catch (PaylerException $e) {
     echo $e->getMessage() . PHP_EOL;
 
     exit(1);
 }
 
-echo 'Block:' . PHP_EOL;
+echo 'Block result:' . PHP_EOL;
 echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
 echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
 echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
@@ -143,7 +134,7 @@ try {
     exit(1);
 }
 
-echo 'Send 3DS response:' . PHP_EOL;
+echo 'Send 3DS result:' . PHP_EOL;
 echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
 echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
 echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
@@ -214,6 +205,29 @@ echo 'New block amount: ' . $response->new_amount . PHP_EOL;
 if (isset($response->status)) {
     echo 'Payment status: ' . $response->status . PHP_EOL;
 }
+
+echo PHP_EOL;
+
+$amount = $response->new_amount;
+
+/**********************************************************************
+ *
+ * Charge
+ *
+ */
+
+try {
+    $response = $client->charge($orderId, $amount);
+} catch (PaylerException $e) {
+    echo $e->getMessage() . PHP_EOL;
+
+    exit(1);
+}
+
+echo 'Charge result:' . PHP_EOL;
+echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
+echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
+echo "\tstatus:\t\t\t" . $response->status . PHP_EOL;
 
 echo PHP_EOL;
 

@@ -28,17 +28,33 @@ interface Merchant extends CustomerCommon, CustomerMerchant
     /**
      * Block funds for two step payment.
      *
-     * @param string $orderId    Order id
-     * @param array  $payload    Request parameters
-     * @param string $customerId Customer id
-     * @param string $cardId     Card id
+     * @param string  $orderId    Order id
+     * @param integer $amount     Payment amount
+     * @param integer $secureCode Card CVV code
+     * @param string  $email      Customer email
+     * @param array   $payload    Request parameters
+     * @param string  $customerId Customer id
+     * @param string  $cardId     Card id
+     *
+     * @throws \Payler\Exceptions\RequestException Wrong request
      */
-    public function block(string $orderId, array $payload, string $customerId = null, string $cardId = null);
+    public function block(
+        string $orderId,
+        int $amount,
+        int $secureCode,
+        string $email,
+        array $payload = [],
+        string $customerId = null,
+        string $cardId = null
+    );
 
     /**
      * Charge funds in two step payment.
+     *
+     * @param string  $orderId Order id
+     * @param integer $amount  Payment amount
      */
-    public function charge();
+    public function charge(string $orderId, int $amount);
 
     /**
      * Retrieve block funds in two step payment.

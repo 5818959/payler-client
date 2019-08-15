@@ -76,14 +76,29 @@ class MerchantClient extends PaylerClient implements MerchantApi
     /**
      * Block funds for two step payment.
      *
-     * @param string $orderId    Order id
-     * @param array  $payload    Request parameters
-     * @param string $customerId Customer id
-     * @param string $cardId     Card id
+     * @param string  $orderId    Order id
+     * @param integer $amount     Payment amount
+     * @param integer $secureCode Card CVV code
+     * @param string  $email      Customer email
+     * @param array   $payload    Request parameters
+     * @param string  $customerId Customer id
+     * @param string  $cardId     Card id
+     *
+     * @throws \Payler\Exceptions\RequestException Wrong request
      */
-    public function block(string $orderId, array $payload, string $customerId = null, string $cardId = null)
-    {
+    public function block(
+        string $orderId,
+        int $amount,
+        int $secureCode,
+        string $email,
+        array $payload = [],
+        string $customerId = null,
+        string $cardId = null
+    ) {
         $payload['order_id'] = $orderId;
+        $payload['amount'] = $amount;
+        $payload['secure_code'] = $secureCode;
+        $payload['email'] = $email;
 
         if (isset($customerId)) {
             $payload['customer_id'] = $customerId;
@@ -98,15 +113,26 @@ class MerchantClient extends PaylerClient implements MerchantApi
             $payload['card_id'] = $cardId;
         }
 
+        if (isset($payload['save_card']) && 1 === $payload['save_card'] && !isset($payload['customer_id'])) {
+            throw new RequestException('The customer_id required if save_card is 1.');
+        }
+
         return $this->request('Block', $payload);
     }
 
     /**
      * Charge funds in two step payment.
+     *
+     * @param string  $orderId Order id
+     * @param integer $amount  Payment amount
      */
-    public function charge()
+    public function charge(string $orderId, int $amount)
     {
-        // TODO implement
+        return $this->request('Charge', [
+            'password' => $this->password,
+            'order_id' => $orderId,
+            'amount' => $amount,
+        ]);
     }
 
     /**
