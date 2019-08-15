@@ -6,7 +6,14 @@ require_once __DIR__ . '/config.php';
 use Payler\Clients\MerchantClient;
 use Payler\Exceptions\PaylerException;
 
-$customerId = '7wx9WZQy6NFkZgBR9pJHg6rwNoTHfPksQqKW';
+$customerId = '';
+
+if (empty($customerId)) {
+    echo 'WARNING!' . PHP_EOL . PHP_EOL
+       . 'To run this example you should set $customerId. Please edit example code.' . PHP_EOL;
+
+    exit(1);
+}
 
 $client = new MerchantClient(PAYLER_BASE_URL, PAYLER_KEY, PAYLER_PASSWORD);
 
