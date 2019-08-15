@@ -17,9 +17,9 @@ interface CustomerCommon
     /**
      * Get the customer saved cards list.
      *
-     * @param string $customerId Customer id
+     * @param string|null $customerId Customer id
      */
-    public function getCardList(string $customerId);
+    public function getCardList(string $customerId = null);
 
     /**
      * Remove the customer saved card.
@@ -33,7 +33,7 @@ interface CustomerCommon
      *
      * @param array $payload Request parameters
      */
-    public function customerRegister(array $payload);
+    public function customerRegister(array $payload = []);
 
     /**
      * Update the customer information.
@@ -41,7 +41,7 @@ interface CustomerCommon
      * @param string $customerId Customer id
      * @param array  $payload    Request parameters
      */
-    public function customerUpdate(string $customerId, array $payload);
+    public function customerUpdate(string $customerId, array $payload = []);
 
     /**
      * Delete the customer.

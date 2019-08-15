@@ -30,11 +30,17 @@ trait HasCustomerCommon
     /**
      * Get the customer saved cards list.
      *
-     * @param string $customerId Customer id
+     * @param string|null $customerId Customer id
      */
-    public function getCardList(string $customerId)
+    public function getCardList(string $customerId = null)
     {
-        return $this->request('GetCardList', ['customer_id' => $customerId]);
+        $payload = [];
+
+        if (isset($customerId)) {
+            $payload['customer_id'] = $customerId;
+        }
+
+        return $this->request('GetCardList', $payload);
     }
 
     /**
@@ -52,7 +58,7 @@ trait HasCustomerCommon
      *
      * @param array $payload Request parameters
      */
-    public function customerRegister(array $payload)
+    public function customerRegister(array $payload = [])
     {
         return $this->request('CustomerRegister', $payload);
     }
@@ -63,7 +69,7 @@ trait HasCustomerCommon
      * @param string $customerId Customer id
      * @param array  $payload    Request parameters
      */
-    public function customerUpdate(string $customerId, array $payload)
+    public function customerUpdate(string $customerId, array $payload = [])
     {
         $payload['customer_id'] = $customerId;
 

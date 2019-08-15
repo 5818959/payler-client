@@ -24,15 +24,18 @@ $client = new MerchantClient(PAYLER_BASE_URL, PAYLER_KEY, PAYLER_PASSWORD);
  */
 
 $card = [
-    'card_number' => PAYLER_TEST_CARD_1_NUMBER,
-    'card_holder' => PAYLER_TEST_CARD_1_HOLDER,
+    'number' => PAYLER_TEST_CARD_1_NUMBER,
+    'holder_name' => PAYLER_TEST_CARD_1_HOLDER,
     'expired_year' => PAYLER_TEST_CARD_1_YEAR,
     'expired_month' => PAYLER_TEST_CARD_1_MONTH,
+];
+$payload = [
+    'card_holder' => $card['holder_name'],
     'lang' => 'ru',
 ];
 
 try {
-    $response = $client->saveCard($customerId, $card);
+    $response = $client->saveCard($customerId, $card['number'], $card['expired_year'], $card['expired_month'], $payload);
 } catch (PaylerException $e) {
     echo $e->getMessage() . PHP_EOL;
 
