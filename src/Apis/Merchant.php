@@ -40,14 +40,14 @@ interface Merchant extends CustomerCommon, CustomerMerchant
     /**
      * Repeat recurrent payment.
      *
-     * @param string $orderId Order id
-     * @param integer $amount Amount
+     * @param string      $orderId             Order id
+     * @param integer     $amount              Amount
      * @param string|null $recurrentTemplateId Recurrent template id
-     * @param string|null $cardId Card id
+     * @param string|null $cardId              Card id
      *
      * @throws \Payler\Exceptions\RequestException Wrong request
      */
-    public function repeatPay(string $order, int $amount, string $recurrentTemplateId = null, string $cardId = null);
+    public function repeatPay(string $orderId, int $amount, string $recurrentTemplateId = null, string $cardId = null);
 
     /**
      * Get recurrent template information.
@@ -59,8 +59,8 @@ interface Merchant extends CustomerCommon, CustomerMerchant
     /**
      * Activate/deactivate recurrent template.
      *
-     * @param string $recurrentTemplateId Recurrent template id
-     * @param boolean $active Show if template should be activated (true) or deactivated (false)
+     * @param string  $recurrentTemplateId Recurrent template id
+     * @param boolean $active              Show if template should be activated (true) or deactivated (false)
      */
     public function activateTemplate(string $recurrentTemplateId, bool $active);
 

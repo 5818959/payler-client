@@ -97,10 +97,10 @@ class MerchantClient extends PaylerClient implements MerchantApi
     /**
      * Repeat recurrent payment.
      *
-     * @param string $orderId Order id
-     * @param integer $amount Amount
+     * @param string      $orderId             Order id
+     * @param integer     $amount              Amount
      * @param string|null $recurrentTemplateId Recurrent template id
-     * @param string|null $cardId Card id
+     * @param string|null $cardId              Card id
      *
      * @throws \Payler\Exceptions\RequestException Wrong request
      */
@@ -139,14 +139,14 @@ class MerchantClient extends PaylerClient implements MerchantApi
     /**
      * Activate/deactivate recurrent template.
      *
-     * @param string $recurrentTemplateId Recurrent template id
-     * @param boolean $active Show if template should be activated (true) or deactivated (false)
+     * @param string  $recurrentTemplateId Recurrent template id
+     * @param boolean $active              Show if template should be activated (true) or deactivated (false)
      */
     public function activateTemplate(string $recurrentTemplateId, bool $active)
     {
         return $this->request('ActivateTemplate', [
             'recurrent_template_id' => $recurrentTemplateId,
-            'active' => $active ? 1 : 0
+            'active' => $active ? 1 : 0,
         ]);
     }
 
