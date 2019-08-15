@@ -2,8 +2,9 @@
 
 namespace Payler\Clients;
 
-use Payler\Clients\Client as PaylerClient;
 use Payler\Apis\Merchant as MerchantApi;
+use Payler\Clients\Client as PaylerClient;
+use Payler\Exceptions\RequestException;
 use Payler\Traits\HasCustomerCommon;
 use Payler\Traits\HasCustomerMerchant;
 
@@ -27,10 +28,49 @@ class MerchantClient extends PaylerClient implements MerchantApi
 
     /**
      * One step payment.
+     *
+     * @param string      $orderId    Order id
+     * @param integer     $amount     Payment amount
+     * @param integer     $secureCode Card CVV code
+     * @param string      $email      Customer email
+     * @param array       $payload    Request parameters
+     * @param string|null $customerId Customer id
+     * @param string|null $cardId     Card id
+     *
+     * @throws \Payler\Exceptions\RequestException Wrong request
      */
-    public function pay()
-    {
-        // TODO implement
+    public function pay(
+        string $orderId,
+        int $amount,
+        int $secureCode,
+        string $email,
+        array $payload = [],
+        string $customerId = null,
+        string $cardId = null
+    ) {
+        $payload['order_id'] = $orderId;
+        $payload['amount'] = $amount;
+        $payload['secure_code'] = $secureCode;
+        $payload['email'] = $email;
+
+        if (isset($customerId)) {
+            $payload['customer_id'] = $customerId;
+        }
+
+        if (isset($cardId)) {
+            unset(
+                $payload['card_number'],
+                $payload['expired_year'],
+                $payload['expired_month']
+            );
+            $payload['card_id'] = $cardId;
+        }
+
+        if (isset($payload['save_card']) && 1 === $payload['save_card'] && !isset($payload['customer_id'])) {
+            throw new RequestException('The customer_id required if save_card is 1.');
+        }
+
+        return $this->request('Pay', $payload);
     }
 
     /**
@@ -88,10 +128,17 @@ class MerchantClient extends PaylerClient implements MerchantApi
 
     /**
      * Return funds.
+     *
+     * @param string  $orderId Order id
+     * @param integer $amount  Payment amount
      */
-    public function refund()
+    public function refund(string $orderId, int $amount)
     {
-        // TODO implement
+        return $this->request('Refund', [
+            'password' => $this->password,
+            'order_id' => $orderId,
+            'amount' => $amount,
+        ]);
     }
 
     /**

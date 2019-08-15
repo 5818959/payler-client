@@ -6,8 +6,24 @@ interface Merchant extends CustomerCommon, CustomerMerchant
 {
     /**
      * One step payment.
+     *
+     * @param string      $orderId    Order id
+     * @param integer     $amount     Payment amount
+     * @param integer     $secureCode Card CVV code
+     * @param string      $email      Customer email
+     * @param array       $payload    Request parameters
+     * @param string|null $customerId Customer id
+     * @param string|null $cardId     Card id
      */
-    public function pay();
+    public function pay(
+        string $orderId,
+        int $amount,
+        int $secureCode,
+        string $email,
+        array $payload = [],
+        string $customerId = null,
+        string $cardId = null
+    );
 
     /**
      * Block funds for two step payment.
@@ -34,8 +50,11 @@ interface Merchant extends CustomerCommon, CustomerMerchant
 
     /**
      * Return funds.
+     *
+     * @param string  $orderId Order id
+     * @param integer $amount  Payment amount
      */
-    public function refund();
+    public function refund(string $orderId, int $amount);
 
     /**
      * Repeat recurrent payment.
