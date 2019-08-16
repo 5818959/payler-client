@@ -83,6 +83,7 @@ if ('1' == $response->auth_type) {
         'acs_url' => $response->acs_url,
         'md' => $response->md,
         'pareq' => $response->pareq,
+        'termurl' => THREEDS_ENDPOINT,
     ]));
 
     echo 'CAUTION!' . PHP_EOL
@@ -200,10 +201,11 @@ try {
     exit(1);
 }
 
-echo 'Payment block changed successfully. Order id: ' . $response->order_id . PHP_EOL;
-echo 'New block amount: ' . $response->new_amount . PHP_EOL;
+echo 'Retrieve result:' . PHP_EOL;
+echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
+echo "\tnew_amount:\t\t" . $response->new_amount . PHP_EOL;
 if (isset($response->status)) {
-    echo 'Payment status: ' . $response->status . PHP_EOL;
+    echo "\tstatus:\t\t" . $response->status . PHP_EOL;
 }
 
 echo PHP_EOL;

@@ -36,7 +36,7 @@ if (!isset($data['acs_url'])) {
     <form id="redirect" method="POST" action="<?= $data['acs_url']; ?>">
         <input type="hidden" name="md" value="<?= $data['md']; ?>">
         <input type="hidden" name="pareq" value="<?= $data['pareq']; ?>">
-        <input type="hidden" name="termurl" value="<?= THREEDS_ENDPOINT; ?>">
+        <input type="hidden" name="termurl" value="<?= $data['termurl']; ?>">
     </form>
     <script type="text/javascript">
         (function () {
