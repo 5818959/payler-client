@@ -3,7 +3,6 @@
 namespace Payler\Clients;
 
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use Payler\Exceptions\RequestException;
 use Payler\Exceptions\ResponseException;
@@ -75,19 +74,21 @@ abstract class Client
         try {
             $response = $client->request('POST', $this->baseUrl . $method, ['form_params' => $payload]);
         } catch (GuzzleRequestException $e) {
-            $message = Psr7\str($e->getRequest());
+            $code = -1;
+            $message = $e->getMessage();
             if ($e->hasResponse()) {
-                $message .= PHP_EOL . Psr7\str($e->getResponse());
+                $response = json_decode((string) $e->getResponse()->getBody());
+                if (!empty($response)) {
+                    $code = $response->error->code;
+                    $message = $response->error->message;
+                }
             }
 
-            throw new RequestException($message);
+            throw new RequestException($message, $code, $e);
         }
 
         if (200 != $response->getStatusCode()) {
-            throw new ResponseException(
-                'Response code is ' . $response->getStatusCode() . PHP_EOL
-                . $response->getBody()->getContents()
-            );
+            throw new ResponseException('Bad response HTTP status code: ' . $response->getStatusCode());
         }
 
         return json_decode($response->getBody()->getContents());
