@@ -5,7 +5,6 @@ namespace Payler\Clients;
 use Payler\Apis\CreditMerchant as CreditMerchantApi;
 use Payler\Clients\CommonClient as CommonClient;
 use Payler\Traits\HasCreditCommon;
-use Payler\Traits\HasCustomerCommon;
 use Payler\Traits\HasCustomerMerchant;
 
 /**
@@ -29,11 +28,11 @@ class CreditMerchantClient extends CommonClient implements CreditMerchantApi
     /**
      * Transfer funds to the card.
      *
-     * @param string      $orderId    Order id
-     * @param integer     $amount     Payment amount
-     * @param integer     $cardNumber Card number
-     * @param string      $email      Customer email
-     * @param array       $payload    Request parameters
+     * @param string  $orderId    Order id
+     * @param integer $amount     Payment amount
+     * @param string  $cardNumber Card number
+     * @param string  $email      Customer email
+     * @param array   $payload    Request parameters
      */
     public function credit(
         string $orderId,
