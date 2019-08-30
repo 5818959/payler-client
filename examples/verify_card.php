@@ -23,15 +23,13 @@ $card = [
     'card_holder' => PAYLER_TEST_CARD_2_HOLDER,
     'expired_year' => PAYLER_TEST_CARD_2_YEAR,
     'expired_month' => PAYLER_TEST_CARD_2_MONTH,
-    'secure_code' => PAYLER_TEST_CARD_2_CVV,
+    'cvv' => PAYLER_TEST_CARD_2_CVV,
 ];
 $orderId = time() . '-' . uniqid() . '-test';
 $amount = 100;
 
 $payment = [
     'currency' => 'RUB',
-    'amount' => $amount,
-    'email' => $customerEmail,
     'recurrent' => 1,
     'save_card' => 1,
 ];
@@ -39,7 +37,7 @@ $payment = [
 $payload = array_merge($payment, $card);
 
 try {
-    $response = $client->block($orderId, $payload, $customerId);
+    $response = $client->block($orderId, $amount, $card['cvv'], $customerEmail, $payload, $customerId);
 } catch (PaylerException $e) {
     echo $e->getMessage() . PHP_EOL;
 
