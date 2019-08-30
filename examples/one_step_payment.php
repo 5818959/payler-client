@@ -84,6 +84,7 @@ if ('1' == $response->auth_type) {
         'acs_url' => $response->acs_url,
         'md' => $response->md,
         'pareq' => $response->pareq,
+        'termurl' => THREEDS_ENDPOINT,
     ]));
 
     echo 'CAUTION!' . PHP_EOL
