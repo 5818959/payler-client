@@ -3,7 +3,7 @@
 namespace Payler\Clients;
 
 use Payler\Apis\CreditMerchant as CreditMerchantApi;
-use Payler\Clients\Client as PaylerClient;
+use Payler\Clients\CommonClient as CommonClient;
 use Payler\Traits\HasCreditCommon;
 use Payler\Traits\HasCustomerCommon;
 use Payler\Traits\HasCustomerMerchant;
@@ -11,10 +11,9 @@ use Payler\Traits\HasCustomerMerchant;
 /**
  * Credit Merchant API client.
  */
-class CreditMerchantClient extends PaylerClient implements CreditMerchantApi
+class CreditMerchantClient extends CommonClient implements CreditMerchantApi
 {
     use HasCreditCommon;
-    use HasCustomerCommon;
     use HasCustomerMerchant;
 
     /**

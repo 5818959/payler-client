@@ -2,7 +2,7 @@
 
 namespace Payler\Apis;
 
-interface CreditMerchant extends CreditCommon, CustomerCommon, CustomerMerchant
+interface CreditMerchant extends CreditCommon, CustomerMerchant
 {
     /**
      * Transfer funds to the card.
