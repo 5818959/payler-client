@@ -2,7 +2,7 @@
 
 namespace Payler\Apis;
 
-interface Merchant extends CustomerCommon, CustomerMerchant
+interface Merchant extends CustomerMerchant
 {
     /**
      * One step payment.
@@ -98,20 +98,6 @@ interface Merchant extends CustomerCommon, CustomerMerchant
      * @param boolean $active              Show if template should be activated (true) or deactivated (false)
      */
     public function activateTemplate(string $recurrentTemplateId, bool $active);
-
-    /**
-     * Get payment status.
-     *
-     * @param string $orderId Order id
-     */
-    public function getStatus(string $orderId);
-
-    /**
-     * Get extended payment status.
-     *
-     * @param string $orderId Order id
-     */
-    public function getAdvancedStatus(string $orderId);
 
     /**
      * Get extended payment status.

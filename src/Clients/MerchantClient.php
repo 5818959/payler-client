@@ -3,23 +3,21 @@
 namespace Payler\Clients;
 
 use Payler\Apis\Merchant as MerchantApi;
-use Payler\Clients\Client as PaylerClient;
+use Payler\Clients\CommonClient as CommonClient;
 use Payler\Exceptions\RequestException;
-use Payler\Traits\HasCustomerCommon;
 use Payler\Traits\HasCustomerMerchant;
 
 /**
  * Merchant API client.
  */
-class MerchantClient extends PaylerClient implements MerchantApi
+class MerchantClient extends CommonClient implements MerchantApi
 {
-    use HasCustomerCommon;
     use HasCustomerMerchant;
 
     /**
      * Documentation version.
      */
-    const VERSION = '1.14';
+    const VERSION = '1.0.2';
 
     /**
      * API URL.
@@ -221,26 +219,6 @@ class MerchantClient extends PaylerClient implements MerchantApi
             'recurrent_template_id' => $recurrentTemplateId,
             'active' => $active ? 1 : 0,
         ]);
-    }
-
-    /**
-     * Get payment status.
-     *
-     * @param string $orderId Order id
-     */
-    public function getStatus(string $orderId)
-    {
-        return $this->request('GetStatus', ['order_id' => $orderId]);
-    }
-
-    /**
-     * Get extended payment status.
-     *
-     * @param string $orderId Order id
-     */
-    public function getAdvancedStatus(string $orderId)
-    {
-        return $this->request('GetAdvancedStatus', ['order_id' => $orderId]);
     }
 
     /**
