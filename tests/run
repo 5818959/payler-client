@@ -31,7 +31,7 @@ phplint_command="php -l -d display_errors=0"
 phpcsfixer_vendor_command="${PROJECT_DIR}/vendor/bin/php-cs-fixer fix --path-mode intersection --config ${PROJECT_DIR}/.php_cs.dist --verbose --show-progress=dots"
 phpcs_vendor_command="${PROJECT_DIR}/vendor/bin/phpcs"
 phpmd_vendor_command="${PROJECT_DIR}/vendor/bin/phpmd ${PROJECT_DIR} text phpmd.xml.dist"
-phpcpd_vendor_command="${PROJECT_DIR}/vendor/bin/phpcpd --exclude=vendor/ --progress ${PROJECT_DIR}"
+phpcpd_vendor_command="${PROJECT_DIR}/vendor/bin/phpcpd --exclude=vendor/ --exclude=examples --progress ${PROJECT_DIR}"
 
 tag_only_changed="${PURPLE}(only changed)${NC}"
 tag_whole_project="${CYAN}(whole project)${NC}"
@@ -117,7 +117,7 @@ fi
 
 
 # Run PHPMD
-  
+
 if [ "$FILES" != "" ]
 then
     echo "${BLUE}Running PHPMD... ${tag_only_changed}"
