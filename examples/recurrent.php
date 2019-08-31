@@ -6,19 +6,19 @@ require_once __DIR__ . '/config.php';
 use Payler\Clients\MerchantClient;
 use Payler\Exceptions\PaylerException;
 
-$client = new MerchantClient(PAYLER_BASE_URL, PAYLER_KEY, PAYLER_PASSWORD);
-
-$recurrentTemplateId = 'rec-pay-3019599c-308d-473a-a939-dcd0d890d215-2d163c9707d0c1de51947a05eb9729d3';
-// $cardId = 'DbdXJZVXlMrmEsJPWqjJxba5t5hS3e7YSS3y';
-$orderId = time() . '-' . uniqid();
+$cardId = defined('PAYLER_CUSTOMER_CARD_ID') ? PAYLER_CUSTOMER_CARD_ID : '';
+$recurrentTemplateId = defined('PAYLER_RECURRENT_TEMPLATE_ID') ? PAYLER_RECURRENT_TEMPLATE_ID : '';
+$orderId = time() . '-' . uniqid() . '-test';
 $amount = 100;
 
 if (empty($recurrentTemplateId) && empty($cardId)) {
     echo 'WARNING!' . PHP_EOL . PHP_EOL
-       . 'To run this example you should set $recurrentTemplateId or $cardId. Please edit example code.' . PHP_EOL;
+    . 'To run this example you should set $recurrentTemplateId or $cardId. Please edit example code.' . PHP_EOL;
 
     exit(1);
 }
+
+$client = new MerchantClient(PAYLER_BASE_URL, PAYLER_KEY, PAYLER_PASSWORD);
 
 /**********************************************************************
  *

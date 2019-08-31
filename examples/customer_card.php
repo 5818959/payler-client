@@ -6,7 +6,7 @@ require_once __DIR__ . '/config.php';
 use Payler\Clients\MerchantClient;
 use Payler\Exceptions\PaylerException;
 
-$customerId = '';
+$customerId = defined('PAYLER_CUSTOMER_ID') ? PAYLER_CUSTOMER_ID : '';
 
 if (empty($customerId)) {
     echo 'WARNING!' . PHP_EOL . PHP_EOL
@@ -35,7 +35,13 @@ $payload = [
 ];
 
 try {
-    $response = $client->saveCard($customerId, $card['number'], $card['expired_year'], $card['expired_month'], $payload);
+    $response = $client->saveCard(
+        $customerId,
+        $card['number'],
+        $card['expired_year'],
+        $card['expired_month'],
+        $payload
+    );
 } catch (PaylerException $e) {
     echo $e->getMessage() . PHP_EOL;
 

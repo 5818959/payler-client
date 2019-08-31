@@ -41,4 +41,17 @@ define('THREEDS_JSON_FILE', __DIR__ . '/3ds.json');
 /**
  * 3DS endpoint script.
  */
-define('THREEDS_ENDPOINT', 'http://localhost:8989/3ds_endpoint.php');
+define('THREEDS_ENDPOINT', 'http://localhost:8000/3ds_endpoint.php');
+
+/**
+ * Payler customer id.
+ */
+define('PAYLER_CUSTOMER_ID', '');
+/**
+ * Payler customer card id.
+ */
+define('PAYLER_CUSTOMER_CARD_ID', '');
+/**
+ * Payler recurrent template id.
+ */
+define('PAYLER_RECURRENT_TEMPLATE_ID', '');

@@ -6,9 +6,7 @@ require_once __DIR__ . '/config.php';
 use Payler\Clients\MerchantClient;
 use Payler\Exceptions\PaylerException;
 
-$client = new MerchantClient(PAYLER_BASE_URL, PAYLER_KEY, PAYLER_PASSWORD);
-
-$orderId = time() . '-' . uniqid();
+$orderId = time() . '-' . uniqid() . '-test';
 $amount = 100;
 $customerEmail = 'test_customer@localhost.test';
 $card = [
@@ -18,6 +16,8 @@ $card = [
     'expired_month' => PAYLER_TEST_CARD_1_MONTH,
     'cvv' => PAYLER_TEST_CARD_1_CVV,
 ];
+
+$client = new MerchantClient(PAYLER_BASE_URL, PAYLER_KEY, PAYLER_PASSWORD);
 
 /**********************************************************************
  *
