@@ -20,7 +20,8 @@ Currently implemented methods:
     * GetStatus
     * GetAdvancedStatus
     * Send3DS
-4. Credit Merchant API (cmapi) - nothing
+4. Credit Merchant API (cmapi)
+    Credit
     GetBalance
 5. Customer (all APIs)
     * GetStatusSaveCard
