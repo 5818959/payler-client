@@ -429,4 +429,14 @@ class RequestException extends PaylerException
             self::UNSUPPORTED_CARD_TYPE,
         ]);
     }
+
+    /**
+     * Is paid earlier?
+     *
+     * @return boolean
+     */
+    public function isPaidEarlier()
+    {
+        return self::PAID_EARLIER === $this->code;
+    }
 }
