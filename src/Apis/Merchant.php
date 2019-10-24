@@ -79,10 +79,17 @@ interface Merchant extends CustomerMerchant
      * @param integer     $amount              Amount
      * @param string|null $recurrentTemplateId Recurrent template id
      * @param string|null $cardId              Card id
+     * @param array       $payload             Request parameters
      *
      * @throws \Payler\Exceptions\RequestException Wrong request
      */
-    public function repeatPay(string $orderId, int $amount, string $recurrentTemplateId = null, string $cardId = null);
+    public function repeatPay(
+        string $orderId,
+        int $amount,
+        string $recurrentTemplateId = null,
+        string $cardId = null,
+        array $payload = []
+    );
 
     /**
      * Get recurrent template information.

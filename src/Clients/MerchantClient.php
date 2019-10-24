@@ -172,15 +172,19 @@ class MerchantClient extends CommonClient implements MerchantApi
      * @param integer     $amount              Amount
      * @param string|null $recurrentTemplateId Recurrent template id
      * @param string|null $cardId              Card id
+     * @param array       $payload             Request parameters
      *
      * @throws \Payler\Exceptions\RequestException Wrong request
      */
-    public function repeatPay(string $orderId, int $amount, string $recurrentTemplateId = null, string $cardId = null)
-    {
-        $payload = [
-            'order_id' => $orderId,
-            'amount' => $amount,
-        ];
+    public function repeatPay(
+        string $orderId,
+        int $amount,
+        string $recurrentTemplateId = null,
+        string $cardId = null,
+        array $payload = []
+    ) {
+        $payload['order_id'] = $orderId;
+        $payload['amount'] = $amount;
 
         if (isset($recurrentTemplateId)) {
             $payload['recurrent_template_id'] = $recurrentTemplateId;
