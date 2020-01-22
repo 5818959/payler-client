@@ -29,7 +29,7 @@ class MerchantClient extends CommonClient implements MerchantApi
      *
      * @param string      $orderId    Order id
      * @param integer     $amount     Payment amount
-     * @param integer     $secureCode Card CVV code
+     * @param string      $secureCode Card CVV code
      * @param string      $email      Customer email
      * @param array       $payload    Request parameters
      * @param string|null $customerId Customer id
@@ -40,7 +40,7 @@ class MerchantClient extends CommonClient implements MerchantApi
     public function pay(
         string $orderId,
         int $amount,
-        int $secureCode,
+        string $secureCode,
         string $email,
         array $payload = [],
         string $customerId = null,
@@ -76,7 +76,7 @@ class MerchantClient extends CommonClient implements MerchantApi
      *
      * @param string  $orderId    Order id
      * @param integer $amount     Payment amount
-     * @param integer $secureCode Card CVV code
+     * @param string  $secureCode Card CVV code
      * @param string  $email      Customer email
      * @param array   $payload    Request parameters
      * @param string  $customerId Customer id
@@ -87,7 +87,7 @@ class MerchantClient extends CommonClient implements MerchantApi
     public function block(
         string $orderId,
         int $amount,
-        int $secureCode,
+        string $secureCode,
         string $email,
         array $payload = [],
         string $customerId = null,
