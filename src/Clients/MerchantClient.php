@@ -17,7 +17,7 @@ class MerchantClient extends CommonClient implements MerchantApi
     /**
      * Documentation version.
      */
-    const VERSION = '1.0.2';
+    const VERSION = '1.1.5';
 
     /**
      * API URL.
@@ -68,7 +68,7 @@ class MerchantClient extends CommonClient implements MerchantApi
             throw new RequestException('The customer_id required if save_card is 1.');
         }
 
-        return $this->request('Pay', $payload);
+        return $this->request('v1/Pay', $payload);
     }
 
     /**
