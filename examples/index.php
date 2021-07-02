@@ -22,3 +22,17 @@ if (THREE_DS_V1 === $data['type']) {
 
     exit(0);
 }
+
+if (THREE_DS_V2 === $data['type']) {
+    include __DIR__ . '/3ds_v2.php';
+
+    exit(0);
+}
+
+if (THREE_DS_V2_CHALLENGE === $data['type']) {
+    // include __DIR__ . '/3ds_v2.php';
+
+    echo '3ds v2 challenge future page content.';
+
+    exit(0);
+}

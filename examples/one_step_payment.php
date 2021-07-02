@@ -31,8 +31,18 @@ $payment = [
     'user_data' => 'test user data',
     'recurrent' => 1,
     'save_card' => 0,
-    'user_entered_param1' => 'value1',
-    'user_entered_param2' => 'value2',
+    // 'user_entered_param1' => 'value1',
+    // 'user_entered_param2' => 'value2',
+    'payer_ip' => '192.230.72.13',
+    'browserAccept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+    'browserLanguage' => 'ru',
+    'browserUserAgent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3900.0 Iron Safari/537.36',
+    'browserJavaEnabled' => true,
+    'browserScreenHeight' => '800', // window.screen.height - Общая высота экрана устройства покупателя в пикселях
+    'browserScreenWidth' => '600', // window.screen.width - Общая ширина экрана устройства покупателя в пикселях
+    'browserColorDepth' => '24', // window.screen.colorDepth Глубина цветопередачи в битах
+    'browserTZ' => '0', // Часовой пояс — разница (в минутах)
+    'threeDsNotificationUrl' => '127.0.0.1'
 ];
 
 $payload = array_merge($payment, $card);
@@ -80,15 +90,34 @@ if (isset($response->status)) {
 echo PHP_EOL;
 
 if ('1' == $response->auth_type) {
-    // 3DS 1.0
+    // check if 3ds 2.0 required
+    if (isset($response->threeDS_server_transID) && !empty($response->threeDS_server_transID)) {
+        // should call 3DSMethod()
 
-    $threeDSData = [
-        'type' => '3ds_v1',
-        'acs_url' => $response->acs_url,
-        'md' => $response->md,
-        'pareq' => $response->pareq,
-        'termurl' => THREEDS_ENDPOINT,
-    ];
+        $threeDSData = [
+            'type' => THREE_DS_V2,
+            'threeDS_server_transID' => $response->threeDS_server_transID,
+            'threeDS_method_url' => $response->threeDS_method_url,
+        ];
+    } elseif (isset($response->creq) && !empty($response->creq)) {
+        // should call ChallengeComplete()
+
+        $threeDSData = [
+            'type' => THREE_DS_V2_CHALLENGE,
+            'acs_url' => $response->acs_url,
+            'creq' => $response->creq,
+        ];
+    } else {
+        // 3DS 1.0
+
+        $threeDSData = [
+            'type' => THREE_DS_V1,
+            'acs_url' => $response->acs_url,
+            'md' => $response->md,
+            'pareq' => $response->pareq,
+            'termurl' => THREEDS_ENDPOINT,
+        ];
+    }
 
     @file_put_contents(THREEDS_JSON_FILE, json_encode($threeDSData));
 
