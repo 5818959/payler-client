@@ -74,14 +74,37 @@ if (isset($payment['save_card']) && !empty($payment['save_card'])) {
         echo "\tcard_id:\t\tFAILED" . PHP_EOL;
     }
 }
-echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
-echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
-echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
-echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
+if (isset($response->card_number)) {
+    echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
+}
+if (isset($response->card_holder)) {
+    echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
+}
+if (isset($response->expired_year)) {
+    echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
+}
+if (isset($response->expired_month)) {
+    echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
+}
 if ('1' == $response->auth_type) {
-    echo "\tacs_url:\t\t" . $response->acs_url . PHP_EOL;
-    echo "\tmd:\t\t\t" . $response->md . PHP_EOL;
-    echo "\tpareq:\t\t\t" . $response->pareq . PHP_EOL;
+    if (isset($response->acs_url)) {
+        echo "\tacs_url:\t\t" . $response->acs_url . PHP_EOL;
+    }
+    if (isset($response->md)) {
+        echo "\tmd:\t\t\t" . $response->md . PHP_EOL;
+    }
+    if (isset($response->pareq)) {
+        echo "\tpareq:\t\t\t" . $response->pareq . PHP_EOL;
+    }
+    if (isset($response->threeDS_server_transID)) {
+        echo "\tthreeDS_server_transID:\t\t\t" . $response->threeDS_server_transID . PHP_EOL;
+    }
+    if (isset($response->threeDS_method_url)) {
+        echo "\tthreeDS_method_url:\t\t\t" . $response->threeDS_method_url . PHP_EOL;
+    }
+    if (isset($response->creq)) {
+        echo "\tcreq:\t\t\t" . $response->creq . PHP_EOL;
+    }
 }
 if (isset($response->status)) {
     echo "\tstatus:\t\t" . $response->status . PHP_EOL;
