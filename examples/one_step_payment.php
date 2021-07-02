@@ -80,12 +80,17 @@ if (isset($response->status)) {
 echo PHP_EOL;
 
 if ('1' == $response->auth_type) {
-    @file_put_contents(THREEDS_JSON_FILE, json_encode([
+    // 3DS 1.0
+
+    $threeDSData = [
+        'type' => '3ds_v1',
         'acs_url' => $response->acs_url,
         'md' => $response->md,
         'pareq' => $response->pareq,
         'termurl' => THREEDS_ENDPOINT,
-    ]));
+    ];
+
+    @file_put_contents(THREEDS_JSON_FILE, json_encode($threeDSData));
 
     echo 'CAUTION!' . PHP_EOL
        . 'This payment require 3DS. Please open `examples/index.php` in browser.' . PHP_EOL

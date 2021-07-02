@@ -1,5 +1,9 @@
 <?php
 
+define('THREE_DS_V1', '3ds_v1');
+define('THREE_DS_V2', '3ds_v2');
+define('THREE_DS_V2_CHALLENGE', '3ds_v2_challenge');
+
 /**
  * Payler API base URL.
  */
