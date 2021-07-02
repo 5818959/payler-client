@@ -149,6 +149,7 @@ if ('1' == $response->auth_type) {
        . PHP_EOL;
 
     $timer = 60;
+    $counter = 0;
     echo 'Waiting for 3DS';
     do {
         echo '.';
@@ -159,12 +160,31 @@ if ('1' == $response->auth_type) {
             $data = json_decode($data, true);
 
             if (isset($data['pares']) && isset($data['md'])) {
+                $data['type'] = THREE_DS_V1;
+
+                break;
+            }
+
+            if (isset($data['threeDSMethodData'])) {
+                $acsResponse = json_decode($data['threeDSMethodData']);
+                var_dump('ACS response', $acsRespose);
+
+                $data['threeDS_server_transID'] = base64url_decode($acsResponse->threeDSServerTransID);
+                $data['type'] = THREE_DS_V2;
+
                 break;
             }
         } else {
             echo 'No 3DS data at all.' . PHP_EOL;
 
             exit(1);
+        }
+
+        if (THREE_DS_V2 === $threeDSData['type'] && 10 < ++$counter) {
+            $data['threeDS_server_transID'] = $threeDSData['threeDS_server_transID'];
+            $data['type'] = THREE_DS_V2;
+
+            break;
         }
 
         sleep(1);
@@ -185,7 +205,7 @@ if ('1' == $response->auth_type) {
  *
  */
 
-if ('1' == $response->auth_type) {
+if (isset($data['type']) && THREE_DS_V1 === $data['type']) {
     try {
         $response = $client->send3DS($data['pares'], $data['md']);
     } catch (PaylerException $e) {
@@ -195,6 +215,89 @@ if ('1' == $response->auth_type) {
     }
 
     echo 'Send 3DS result:' . PHP_EOL;
+    echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
+    echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
+    echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
+    if (isset($response->recurrent_template_id)) {
+        echo "\trecurrent_template_id:\t" . $response->recurrent_template_id . PHP_EOL;
+    }
+    if (isset($response->card_id)) {
+        echo "\tcard_id:\t\t" . $response->card_id . PHP_EOL;
+    }
+    if (isset($response->card_status)) {
+        echo "\tcard_status:\t\t" . $response->card_status . PHP_EOL;
+    }
+    if (isset($response->card_number)) {
+        echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
+        echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
+        echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
+        echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
+    }
+    if (isset($response->status)) {
+        echo "\tstatus:\t\t\t" . $response->status . PHP_EOL;
+    }
+
+    echo PHP_EOL;
+}
+
+/**********************************************************************
+ *
+ * Complete 3DS 2.0 authentication
+ *
+ */
+
+if (isset($data['type']) && THREE_DS_V2 === $data['type']) {
+    try {
+        $response = $client->threeDsMethodComplete(false, $data['threeDS_server_transID']);
+    } catch (PaylerException $e) {
+        echo $e->getMessage() . PHP_EOL;
+
+        exit(1);
+    }
+
+    echo 'ThreeDsMethodComplete result:' . PHP_EOL;
+    echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
+    echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
+    echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
+    if (isset($response->recurrent_template_id)) {
+        echo "\trecurrent_template_id:\t" . $response->recurrent_template_id . PHP_EOL;
+    }
+    if (isset($response->acs_url)) {
+        echo "\tacs_url:\t\t" . $response->acs_url . PHP_EOL;
+    }
+    if (isset($response->creq)) {
+        echo "\tcreq:\t\t" . $response->creq . PHP_EOL;
+    }
+    // if (isset($response->card_number)) {
+        // should be in both results
+        echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
+        echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
+        echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
+        echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
+    // }
+    if (isset($response->status)) {
+        echo "\tstatus:\t\t\t" . $response->status . PHP_EOL;
+    }
+
+    echo PHP_EOL;
+}
+
+/**********************************************************************
+ *
+ * Complete 3DS 2.0 authentication challenge
+ *
+ */
+
+if (isset($data['type']) && THREE_DS_V2_CHALLENGE === $data['type']) {
+    try {
+        $response = $client->challengeComplete(false, $data['cres']);
+    } catch (PaylerException $e) {
+        echo $e->getMessage() . PHP_EOL;
+
+        exit(1);
+    }
+
+    echo 'ChallengeComplete result:' . PHP_EOL;
     echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
     echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
     echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
