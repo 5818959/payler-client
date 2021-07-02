@@ -2,7 +2,7 @@
 
 ## Details
 
-Based on Payler API 1.0.2.
+Based on Payler API 1.1.5.
 
 Currently implemented methods:
 
@@ -20,6 +20,9 @@ Currently implemented methods:
     * GetStatus
     * GetAdvancedStatus
     * Send3DS
+    w 3DSMethod
+    w ThreeDsMethodComplete
+    w ChallengeComplete
 4. Credit Merchant API (cmapi)
     * Credit
     * GetBalance
