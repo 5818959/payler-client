@@ -20,9 +20,9 @@ Currently implemented methods:
     * GetStatus
     * GetAdvancedStatus
     * Send3DS
-    w 3DSMethod
-    w ThreeDsMethodComplete
-    w ChallengeComplete
+    * 3DSMethod
+    * ThreeDsMethodComplete
+    * ChallengeComplete
 4. Credit Merchant API (cmapi)
     * Credit
     * GetBalance

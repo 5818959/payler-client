@@ -113,4 +113,19 @@ interface Merchant extends CustomerMerchant
      * @param string $md    Merchant data
      */
     public function send3DS(string $paRes, string $md);
+
+    /**
+     * Complete 3DS 2.0 authentication.
+     *
+     * @param boolean $compInd True if ACS callback was received, otherwise false
+     * @param string  $transId threeDS_server_transID value received on previous authentication step.
+     */
+    public function threeDsMethodComplete(bool $compInd, string $transId);
+
+    /**
+     * Complete additional 3DS 2.0 authentication.
+     *
+     * @param string $cres cres value received on previous authentication step.
+     */
+    public function challengeComplete(string $cres);
 }

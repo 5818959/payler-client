@@ -69,6 +69,11 @@ class MerchantClient extends CommonClient implements MerchantApi
         }
 
         return $this->request('v1/Pay', $payload);
+
+        // return ThreeDSv1AuthResponse
+        // return ThreeDSv2AuthResponse
+        // return ChallengeCompleteResponse
+        // return PaymentResultResponse
     }
 
     /**
@@ -116,6 +121,11 @@ class MerchantClient extends CommonClient implements MerchantApi
         }
 
         return $this->request('Block', $payload);
+
+        // return ThreeDSv1AuthResponse
+        // return ThreeDSv2AuthResponse
+        // return ChallengeCompleteResponse
+        // return PaymentResultResponse
     }
 
     /**
@@ -234,5 +244,36 @@ class MerchantClient extends CommonClient implements MerchantApi
     public function send3DS(string $paRes, string $md)
     {
         return $this->request('Send3DS', ['pares' => $paRes, 'md' => $md]);
+
+        // return PaymentResultResponse
+    }
+
+    /**
+     * Complete 3DS 2.0 authentication.
+     *
+     * @param boolean $compInd True if ACS callback was received, otherwise false
+     * @param string  $transId threeDS_server_transID value received on previous authentication step.
+     */
+    public function threeDsMethodComplete(bool $compInd, string $transId)
+    {
+        return $this->request('v1/ThreeDsMethodComplete', [
+            'threeDs_comp_ind' => ($compInd ? 'Y' : 'N'),
+            'threeDS_server_transID' => $transId,
+        ]);
+
+        // return ChallengeCompleteResponse
+        // return PaymentResultResponse
+    }
+
+    /**
+     * Complete additional 3DS 2.0 authentication.
+     *
+     * @param string $cRes cres value received on previous authentication step.
+     */
+    public function challengeComplete(string $cRes)
+    {
+        return $this->request('v1/ChallengeComplete', ['cres' => $cRes]);
+
+        // return PaymentResultResponse
     }
 }
