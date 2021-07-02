@@ -107,7 +107,7 @@ interface Merchant extends CustomerMerchant
     public function activateTemplate(string $recurrentTemplateId, bool $active);
 
     /**
-     * Get extended payment status.
+     * Complete 3DS 1.0 authentication.
      *
      * @param string $paRes Payment authentication response
      * @param string $md    Merchant data
