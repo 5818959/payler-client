@@ -147,37 +147,37 @@ if ('1' == $response->auth_type) {
     echo 'CAUTION!' . PHP_EOL
        . 'This payment require 3DS. Please open `examples/index.php` in browser.' . PHP_EOL
        . PHP_EOL;
-}
 
-$timer = 60;
-echo 'Waiting for 3DS';
-do {
-    echo '.';
-    flush();
+    $timer = 60;
+    echo 'Waiting for 3DS';
+    do {
+        echo '.';
+        flush();
 
-    $data = @file_get_contents(THREEDS_JSON_FILE);
-    if (!empty($data)) {
-        $data = json_decode($data, true);
+        $data = @file_get_contents(THREEDS_JSON_FILE);
+        if (!empty($data)) {
+            $data = json_decode($data, true);
 
-        if (isset($data['pares']) && isset($data['md'])) {
-            break;
+            if (isset($data['pares']) && isset($data['md'])) {
+                break;
+            }
+        } else {
+            echo 'No 3DS data at all.' . PHP_EOL;
+
+            exit(1);
         }
-    } else {
-        echo 'No 3DS data at all.' . PHP_EOL;
+
+        sleep(1);
+    } while (--$timer);
+
+    if (!$timer) {
+        echo 'No 3DS response.' . PHP_EOL;
 
         exit(1);
     }
 
-    sleep(1);
-} while (--$timer);
-
-if (!$timer) {
-    echo 'No 3DS response.' . PHP_EOL;
-
-    exit(1);
+    echo PHP_EOL;
 }
-
-echo PHP_EOL;
 
 /**********************************************************************
  *
@@ -185,38 +185,40 @@ echo PHP_EOL;
  *
  */
 
-try {
-    $response = $client->send3DS($data['pares'], $data['md']);
-} catch (PaylerException $e) {
-    echo $e->getMessage() . PHP_EOL;
+if ('1' == $response->auth_type) {
+    try {
+        $response = $client->send3DS($data['pares'], $data['md']);
+    } catch (PaylerException $e) {
+        echo $e->getMessage() . PHP_EOL;
 
-    exit(1);
-}
+        exit(1);
+    }
 
-echo 'Send 3DS result:' . PHP_EOL;
-echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
-echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
-echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
-if (isset($response->recurrent_template_id)) {
-    echo "\trecurrent_template_id:\t" . $response->recurrent_template_id . PHP_EOL;
-}
-if (isset($response->card_id)) {
-    echo "\tcard_id:\t\t" . $response->card_id . PHP_EOL;
-}
-if (isset($response->card_status)) {
-    echo "\tcard_status:\t\t" . $response->card_status . PHP_EOL;
-}
-if (isset($response->card_number)) {
-    echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
-    echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
-    echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
-    echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
-}
-if (isset($response->status)) {
-    echo "\tstatus:\t\t\t" . $response->status . PHP_EOL;
-}
+    echo 'Send 3DS result:' . PHP_EOL;
+    echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
+    echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
+    echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
+    if (isset($response->recurrent_template_id)) {
+        echo "\trecurrent_template_id:\t" . $response->recurrent_template_id . PHP_EOL;
+    }
+    if (isset($response->card_id)) {
+        echo "\tcard_id:\t\t" . $response->card_id . PHP_EOL;
+    }
+    if (isset($response->card_status)) {
+        echo "\tcard_status:\t\t" . $response->card_status . PHP_EOL;
+    }
+    if (isset($response->card_number)) {
+        echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
+        echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
+        echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
+        echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
+    }
+    if (isset($response->status)) {
+        echo "\tstatus:\t\t\t" . $response->status . PHP_EOL;
+    }
 
-echo PHP_EOL;
+    echo PHP_EOL;
+}
 
 /**********************************************************************
  *
