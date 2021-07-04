@@ -42,7 +42,7 @@ $payment = [
     'browserScreenWidth' => '600', // window.screen.width - Общая ширина экрана устройства покупателя в пикселях
     'browserColorDepth' => '24', // window.screen.colorDepth Глубина цветопередачи в битах
     'browserTZ' => '0', // Часовой пояс — разница (в минутах)
-    'threeDsNotificationUrl' => '127.0.0.1'
+    'threeDsNotificationUrl' => THREEDS_V2_PUBLIC_ENDPOINT,
 ];
 
 $payload = array_merge($payment, $card);
