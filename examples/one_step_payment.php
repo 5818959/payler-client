@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/3ds_functions.php';
 
 use Payler\Clients\MerchantClient;
 use Payler\Exceptions\PaylerException;
@@ -31,8 +32,18 @@ $payment = [
     'user_data' => 'test user data',
     'recurrent' => 1,
     'save_card' => 0,
-    'user_entered_param1' => 'value1',
-    'user_entered_param2' => 'value2',
+    // 'user_entered_param1' => 'value1',
+    // 'user_entered_param2' => 'value2',
+    'payer_ip' => '192.168.0.1',
+    'browserAccept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+    'browserLanguage' => 'ru',
+    'browserUserAgent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3900.0 Iron Safari/537.36',
+    'browserJavaEnabled' => true,
+    'browserScreenHeight' => '800', // window.screen.height - Общая высота экрана устройства покупателя в пикселях
+    'browserScreenWidth' => '600', // window.screen.width - Общая ширина экрана устройства покупателя в пикселях
+    'browserColorDepth' => '24', // window.screen.colorDepth Глубина цветопередачи в битах
+    'browserTZ' => '0', // Часовой пояс — разница (в минутах)
+    'threeDsNotificationUrl' => THREEDS_ENDPOINT,
 ];
 
 $payload = array_merge($payment, $card);
@@ -64,14 +75,37 @@ if (isset($payment['save_card']) && !empty($payment['save_card'])) {
         echo "\tcard_id:\t\tFAILED" . PHP_EOL;
     }
 }
-echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
-echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
-echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
-echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
+if (isset($response->card_number)) {
+    echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
+}
+if (isset($response->card_holder)) {
+    echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
+}
+if (isset($response->expired_year)) {
+    echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
+}
+if (isset($response->expired_month)) {
+    echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
+}
 if ('1' == $response->auth_type) {
-    echo "\tacs_url:\t\t" . $response->acs_url . PHP_EOL;
-    echo "\tmd:\t\t\t" . $response->md . PHP_EOL;
-    echo "\tpareq:\t\t\t" . $response->pareq . PHP_EOL;
+    if (isset($response->acs_url)) {
+        echo "\tacs_url:\t\t" . $response->acs_url . PHP_EOL;
+    }
+    if (isset($response->md)) {
+        echo "\tmd:\t\t\t" . $response->md . PHP_EOL;
+    }
+    if (isset($response->pareq)) {
+        echo "\tpareq:\t\t\t" . $response->pareq . PHP_EOL;
+    }
+    if (isset($response->threeDS_server_transID)) {
+        echo "\tthreeDS_server_transID:\t\t\t" . $response->threeDS_server_transID . PHP_EOL;
+    }
+    if (isset($response->threeDS_method_url)) {
+        echo "\tthreeDS_method_url:\t\t\t" . $response->threeDS_method_url . PHP_EOL;
+    }
+    if (isset($response->creq)) {
+        echo "\tcreq:\t\t\t" . $response->creq . PHP_EOL;
+    }
 }
 if (isset($response->status)) {
     echo "\tstatus:\t\t" . $response->status . PHP_EOL;
@@ -80,47 +114,97 @@ if (isset($response->status)) {
 echo PHP_EOL;
 
 if ('1' == $response->auth_type) {
-    @file_put_contents(THREEDS_JSON_FILE, json_encode([
-        'acs_url' => $response->acs_url,
-        'md' => $response->md,
-        'pareq' => $response->pareq,
-        'termurl' => THREEDS_ENDPOINT,
-    ]));
+    // check if 3ds 2.0 required
+    if (isset($response->threeDS_server_transID) && !empty($response->threeDS_server_transID)) {
+        // should call 3DSMethod()
+
+        $threeDSData = [
+            'type' => THREE_DS_V2,
+            'threeDS_server_transID' => $response->threeDS_server_transID,
+            'threeDS_method_url' => $response->threeDS_method_url,
+        ];
+    } elseif (isset($response->creq) && !empty($response->creq)) {
+        // should call ChallengeComplete()
+
+        $threeDSData = [
+            'type' => THREE_DS_V2_CHALLENGE,
+            'acs_url' => $response->acs_url,
+            'creq' => $response->creq,
+        ];
+    } else {
+        // 3DS 1.0
+
+        $threeDSData = [
+            'type' => THREE_DS_V1,
+            'acs_url' => $response->acs_url,
+            'md' => $response->md,
+            'pareq' => $response->pareq,
+            'termurl' => THREEDS_ENDPOINT,
+        ];
+    }
+
+    @file_put_contents(THREEDS_JSON_FILE, json_encode($threeDSData));
 
     echo 'CAUTION!' . PHP_EOL
-       . 'This payment require 3DS. Please open `examples/index.php` in browser.' . PHP_EOL
-       . PHP_EOL;
-}
+        . 'This payment require 3DS. Please open `examples/index.php` in browser.' . PHP_EOL
+        . PHP_EOL;
 
-$timer = 60;
-echo 'Waiting for 3DS';
-do {
-    echo '.';
-    flush();
+    $timer = 60;
+    $counter = 0;
+    echo 'Waiting for 3DS';
+    do {
+        echo '.';
+        flush();
 
-    $data = @file_get_contents(THREEDS_JSON_FILE);
-    if (!empty($data)) {
-        $data = json_decode($data, true);
+        $data = @file_get_contents(THREEDS_JSON_FILE);
+        if (!empty($data)) {
+            $data = json_decode($data, true);
 
-        if (isset($data['pares']) && isset($data['md'])) {
+            if (isset($data['pares']) && isset($data['md'])) {
+                $data['type'] = THREE_DS_V1;
+
+                break;
+            }
+
+            if (isset($data['threeDS_server_transID']) && $data['threeDS_server_transID'] == $threeDSData['threeDS_server_transID']) {
+                $data['type'] = THREE_DS_V2;
+                $data['acs_response'] = true;
+
+                break;
+            }
+
+            if (isset($data['cres'])) {
+                $data['type'] = THREE_DS_V2_CHALLENGE;
+
+                break;
+            }
+        } else {
+            echo 'No 3DS data at all.' . PHP_EOL;
+
+            exit(1);
+        }
+
+        if (THREE_DS_V2 === $threeDSData['type'] && 10 < ++$counter) {
+            $data['type'] = THREE_DS_V2;
+            $data['threeDS_server_transID'] = $threeDSData['threeDS_server_transID'];
+            $data['acs_response'] = false;
+
+            echo PHP_EOL . 'No response from ACS' . PHP_EOL;
+
             break;
         }
-    } else {
-        echo 'No 3DS data at all.' . PHP_EOL;
+
+        sleep(1);
+    } while (--$timer);
+
+    if (!$timer) {
+        echo 'No 3DS response.' . PHP_EOL;
 
         exit(1);
     }
 
-    sleep(1);
-} while (--$timer);
-
-if (!$timer) {
-    echo 'No 3DS response.' . PHP_EOL;
-
-    exit(1);
+    echo PHP_EOL;
 }
-
-echo PHP_EOL;
 
 /**********************************************************************
  *
@@ -128,38 +212,173 @@ echo PHP_EOL;
  *
  */
 
-try {
-    $response = $client->send3DS($data['pares'], $data['md']);
-} catch (PaylerException $e) {
-    echo $e->getMessage() . PHP_EOL;
+if (isset($data['type']) && THREE_DS_V1 === $data['type']) {
+    try {
+        $response = $client->send3DS($data['pares'], $data['md']);
+    } catch (PaylerException $e) {
+        echo $e->getMessage() . PHP_EOL;
 
-    exit(1);
+        exit(1);
+    }
+
+    echo 'Send 3DS result:' . PHP_EOL;
+    echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
+    echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
+    echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
+    if (isset($response->recurrent_template_id)) {
+        echo "\trecurrent_template_id:\t" . $response->recurrent_template_id . PHP_EOL;
+    }
+    if (isset($response->card_id)) {
+        echo "\tcard_id:\t\t" . $response->card_id . PHP_EOL;
+    }
+    if (isset($response->card_status)) {
+        echo "\tcard_status:\t\t" . $response->card_status . PHP_EOL;
+    }
+    if (isset($response->card_number)) {
+        echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
+        echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
+        echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
+        echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
+    }
+    if (isset($response->status)) {
+        echo "\tstatus:\t\t\t" . $response->status . PHP_EOL;
+    }
+
+    echo PHP_EOL;
 }
 
-echo 'Send 3DS result:' . PHP_EOL;
-echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
-echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
-echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
-if (isset($response->recurrent_template_id)) {
-    echo "\trecurrent_template_id:\t" . $response->recurrent_template_id . PHP_EOL;
-}
-if (isset($response->card_id)) {
-    echo "\tcard_id:\t\t" . $response->card_id . PHP_EOL;
-}
-if (isset($response->card_status)) {
-    echo "\tcard_status:\t\t" . $response->card_status . PHP_EOL;
-}
-if (isset($response->card_number)) {
+/**********************************************************************
+ *
+ * Complete 3DS 2.0 authentication
+ *
+ */
+
+if (isset($data['type']) && THREE_DS_V2 === $data['type']) {
+    try {
+        $response = $client->threeDsMethodComplete($data['acs_response'], $data['threeDS_server_transID']);
+    } catch (PaylerException $e) {
+        echo $e->getMessage() . PHP_EOL;
+
+        exit(1);
+    }
+
+    echo 'ThreeDsMethodComplete result:' . PHP_EOL;
+    echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
+    echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
+    echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
+    if (isset($response->recurrent_template_id)) {
+        echo "\trecurrent_template_id:\t" . $response->recurrent_template_id . PHP_EOL;
+    }
+    if (isset($response->acs_url)) {
+        echo "\tacs_url:\t\t" . $response->acs_url . PHP_EOL;
+    }
+    if (isset($response->creq)) {
+        echo "\tcreq:\t\t" . $response->creq . PHP_EOL;
+    }
     echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
     echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
     echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
     echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
-}
-if (isset($response->status)) {
-    echo "\tstatus:\t\t\t" . $response->status . PHP_EOL;
+    if (isset($response->status)) {
+        echo "\tstatus:\t\t\t" . $response->status . PHP_EOL;
+    }
+
+    echo PHP_EOL;
+
+    if ('1' == $response->auth_type) {
+        if (!isset($response->acs_url) || !isset($response->creq)) {
+            echo PHP_EOL . '!!! Invalid auth request !!!' . PHP_EOL;
+
+            exit(1);
+        }
+
+        $threeDSData = [
+            'type' => THREE_DS_V2_CHALLENGE,
+            'acs_url' => $response->acs_url,
+            'creq' => $response->creq,
+        ];
+
+        @file_put_contents(THREEDS_JSON_FILE, json_encode($threeDSData));
+
+        echo 'CAUTION!' . PHP_EOL
+            . 'This payment require 3DS. Please open `examples/index.php` in browser.' . PHP_EOL
+            . PHP_EOL;
+
+        $timer = 60;
+        $counter = 0;
+        echo 'Waiting for 3DS';
+        do {
+            echo '.';
+            flush();
+
+            $data = @file_get_contents(THREEDS_JSON_FILE);
+            if (!empty($data)) {
+                $data = json_decode($data, true);
+
+                if (isset($data['cres'])) {
+                    $data['type'] = THREE_DS_V2_CHALLENGE;
+
+                    break;
+                }
+            } else {
+                echo 'No 3DS data at all.' . PHP_EOL;
+
+                exit(1);
+            }
+
+            sleep(1);
+        } while (--$timer);
+
+        if (!$timer) {
+            echo 'No 3DS response.' . PHP_EOL;
+
+            exit(1);
+        }
+
+        echo PHP_EOL;
+    }
 }
 
-echo PHP_EOL;
+/**********************************************************************
+ *
+ * Complete 3DS 2.0 authentication challenge
+ *
+ */
+
+if (isset($data['type']) && THREE_DS_V2_CHALLENGE === $data['type']) {
+    try {
+        $response = $client->challengeComplete($data['cres']);
+    } catch (PaylerException $e) {
+        echo $e->getMessage() . PHP_EOL;
+
+        exit(1);
+    }
+
+    echo 'ChallengeComplete result:' . PHP_EOL;
+    echo "\torder_id:\t\t" . $response->order_id . PHP_EOL;
+    echo "\tamount:\t\t\t" . $response->amount . PHP_EOL;
+    echo "\tauth_type:\t\t" . $response->auth_type . PHP_EOL;
+    if (isset($response->recurrent_template_id)) {
+        echo "\trecurrent_template_id:\t" . $response->recurrent_template_id . PHP_EOL;
+    }
+    if (isset($response->card_id)) {
+        echo "\tcard_id:\t\t" . $response->card_id . PHP_EOL;
+    }
+    if (isset($response->card_status)) {
+        echo "\tcard_status:\t\t" . $response->card_status . PHP_EOL;
+    }
+    if (isset($response->card_number)) {
+        echo "\tcard_number:\t\t" . $response->card_number . PHP_EOL;
+        echo "\tcard_holder:\t\t" . $response->card_holder . PHP_EOL;
+        echo "\texpired_year:\t\t" . $response->expired_year . PHP_EOL;
+        echo "\texpired_month:\t\t" . $response->expired_month . PHP_EOL;
+    }
+    if (isset($response->status)) {
+        echo "\tstatus:\t\t\t" . $response->status . PHP_EOL;
+    }
+
+    echo PHP_EOL;
+}
 
 /**********************************************************************
  *
