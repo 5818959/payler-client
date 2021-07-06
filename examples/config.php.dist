@@ -48,11 +48,6 @@ define('THREEDS_JSON_FILE', __DIR__ . '/3ds.json');
 define('THREEDS_ENDPOINT', 'http://localhost:8000/3ds_endpoint.php');
 
 /**
- * 3DS 2.0 public endpoint.
- */
-define('THREEDS_V2_PUBLIC_ENDPOINT', 'http://publichost.local/tests/endpoint.php');
-
-/**
  * Payler customer id.
  */
 define('PAYLER_CUSTOMER_ID', '');
