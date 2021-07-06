@@ -24,13 +24,14 @@ if (
 }
 
 $body = base64url_encode(json_encode([
-    'threeDSMethodNotificationURL' => '',
-    'threeDSServerTransID' => '',
+    'threeDSMethodNotificationURL' => THREEDS_ENDPOINT,
+    'threeDSServerTransID' => $data['threeDS_server_transID'],
 ]));
 
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -42,24 +43,22 @@ $body = base64url_encode(json_encode([
     <meta http-equiv="pragma" content="no-cache">
     <title>3DS</title>
 </head>
+
 <body>
-    <!-- <iframe src="https://www.youtube.com/embed/X18mUlDddCc?autoplay=1" style="width:0;height:0;border:0; border:none;"></iframe> -->
-
-    <p>Main page content.</p>
-
     <iframe></iframe>
-
     <script type="text/javascript">
-        (function () {
+        (function() {
             document.querySelector('iframe')
                 .contentDocument.write(
-                    '<form id="redirect" method="POST" action="<?= $data['threeDS_method_url']; ?>">'
-                    + '<input type="textarea" name="threeDSMethodData" value="<?= $body; ?>">'
-                    + '<input type="submit" value="send"></form>');
+                    '<form id="redirect" method="POST" action="<?= $data['threeDS_method_url']; ?>">' +
+                    '<input type="hidden" name="threeDSMethodData" value="<?= $body; ?>">' +
+                    '<input type="submit" value="send">' +
+                    '</form>'
+                );
 
-            // document.querySelector('iframe').contentDocument.forms[0].submit();
+            document.querySelector('iframe').contentDocument.forms[0].submit();
         })();
     </script>
-
 </body>
+
 </html>
