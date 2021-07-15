@@ -25,6 +25,6 @@ trait HasCustomerMerchant
         $payload['expired_year'] = $expiredYear;
         $payload['expired_month'] = $expiredMonth;
 
-        return $this->request('SaveCard', $payload);
+        return $this->request('v1/SaveCard', $payload);
     }
 }

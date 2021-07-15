@@ -9,7 +9,7 @@ trait HasCreditCommon
      */
     public function getBalance()
     {
-        return $this->request('GetBalance', [
+        return $this->request('v1/GetBalance', [
             'password' => $this->password,
         ]);
     }

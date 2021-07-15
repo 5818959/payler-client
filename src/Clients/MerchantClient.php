@@ -199,13 +199,13 @@ class MerchantClient extends CommonClient implements MerchantApi
         if (isset($recurrentTemplateId)) {
             $payload['recurrent_template_id'] = $recurrentTemplateId;
 
-            return $this->request('RepeatPay', $payload);
+            return $this->request('v1/RepeatPay', $payload);
         }
 
         if (isset($cardId)) {
             $payload['card_id'] = $cardId;
 
-            return $this->request('RepeatPay', $payload);
+            return $this->request('v1/RepeatPay', $payload);
         }
 
         throw new RequestException('You must set recurrent_template_id or card_id parameter.');
@@ -243,7 +243,7 @@ class MerchantClient extends CommonClient implements MerchantApi
      */
     public function send3DS(string $paRes, string $md)
     {
-        return $this->request('Send3DS', ['pares' => $paRes, 'md' => $md]);
+        return $this->request('v1/Send3DS', ['pares' => $paRes, 'md' => $md]);
 
         // return PaymentResultResponse
     }
