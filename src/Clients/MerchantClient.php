@@ -120,7 +120,7 @@ class MerchantClient extends CommonClient implements MerchantApi
             throw new RequestException('The customer_id required if save_card is 1.');
         }
 
-        return $this->request('Block', $payload);
+        return $this->request('v1/Block', $payload);
 
         // return ThreeDSv1AuthResponse
         // return ThreeDSv2AuthResponse
